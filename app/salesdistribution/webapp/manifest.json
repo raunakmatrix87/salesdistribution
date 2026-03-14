@@ -145,6 +145,13 @@
                       "enabled": true,
                       "requiresSelection": false,
                       "text": "Add"
+                    },
+                    "itemConfig": {
+                      "press": "salesdistribution.ext.controller.ItemConfig.configureItem",
+                      "visible": true,
+                      "enabled": true,
+                      "requiresSelection": true,
+                      "text": "Item Config"
                     }
                   }
                 },
@@ -163,6 +170,13 @@
                       "enabled": true,
                       "requiresSelection": false,
                       "text": "Add"
+                    },
+                    "itemConfig": {
+                      "press": "salesdistribution.ext.controller.ItemConfig.configureItem",
+                      "visible": true,
+                      "enabled": true,
+                      "requiresSelection": true,
+                      "text": "Item Config"
                     }
                   }
                 }

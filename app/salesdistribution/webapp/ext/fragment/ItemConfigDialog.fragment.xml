@@ -1,0 +1,68 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        id="itemConfigDialog"
+        title="Variant Configuration"
+        contentWidth="72rem"
+        contentHeight="36rem"
+        draggable="true"
+        resizable="true">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Title text="{itemConfig>/title}" level="H4" />
+                <Text text="{itemConfig>/subtitle}" class="sapUiTinyMarginBottom" />
+                <Table
+                    id="itemConfigTable"
+                    inset="false"
+                    items="{itemConfig>/rows}">
+                    <columns>
+                        <Column width="12rem">
+                            <header><Label text="Characteristic ID" /></header>
+                        </Column>
+                        <Column width="16rem">
+                            <header><Label text="Characteristic Name" /></header>
+                        </Column>
+                        <Column width="16rem">
+                            <header><Label text="Selected Value" /></header>
+                        </Column>
+                        <Column width="10rem" hAlign="End">
+                            <header><Label text="Surcharge" /></header>
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{itemConfig>charId}" />
+                                <Text text="{itemConfig>characteristicName}" />
+                                <ComboBox
+                                    width="100%"
+                                    selectedKey="{itemConfig>selectedValueId}"
+                                    selectionChange="onConfigSelectionChange"
+                                    items="{itemConfig>options}">
+                                    <core:Item
+                                        key="{itemConfig>valueId}"
+                                        text="{itemConfig>valueName}" />
+                                </ComboBox>
+                                <ObjectNumber
+                                    number="{itemConfig>surcharge}"
+                                    unit="USD" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+                <HBox justifyContent="End" class="sapUiSmallMarginTop">
+                    <ObjectStatus
+                        text="{= 'Total Surcharge: ' + ${itemConfig>/totalSurcharge} + ' USD' }"
+                        state="Information" />
+                </HBox>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="Apply" type="Emphasized" press="onConfigApply" />
+        </beginButton>
+        <endButton>
+            <Button text="Cancel" press="onConfigCancel" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

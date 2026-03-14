@@ -24,6 +24,20 @@ function buildCustomerDisplay(oCustomer) {
   return `${oCustomer.Name}/${oCustomer.Street}/${oCustomer.Region} ${oCustomer.PostalCode}`;
 }
 
+async function enrichItemFromCatalog(req) {
+  const oData = req.data || {};
+  if (!Object.prototype.hasOwnProperty.call(oData, "Material") || !oData.Material) {
+    return;
+  }
+
+  const oCatalog = await SELECT.one
+    .from("com.copa.salesDist.catalog")
+    .columns("IsConfigurable")
+    .where({ ProductID: oData.Material });
+
+  req.data.IsConfigurable = !!(oCatalog && oCatalog.IsConfigurable);
+}
+
 module.exports = cds.service.impl(function () {
   this.before(["CREATE", "UPDATE"], ["salesDistHeader", "salesDistHeader.drafts"], async (req) => {
     const oData = req.data || {};
@@ -84,6 +98,7 @@ module.exports = cds.service.impl(function () {
 
   this.before(["CREATE", "UPDATE"], ["salesDistItem", "salesDistItem.drafts"], async (req) => {
     const oData = req.data || {};
+    await enrichItemFromCatalog(req);
     let fQuantity = toNumber(oData.Quantity);
     let fUnitPrice = toNumber(oData.UnitPriceAmount);
 

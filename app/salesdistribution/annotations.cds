@@ -162,6 +162,7 @@ annotate service.salesDistItem with @(
         NonUpdatableProperties : [
             ItemNumer,
             Material,
+            IsConfigurable,
             Plant,
             UnitPriceAmount,
             TotalValueAmount,
@@ -193,6 +194,12 @@ annotate service.salesDistItem with @(
     $Type: 'UI.DataField',
     Label: 'Material',
     Value: Material,
+    ![@UI.Importance]: #High,
+    },
+    {
+    $Type: 'UI.DataField',
+    Label: 'Configurable',
+    Value: IsConfigurable,
     ![@UI.Importance]: #High,
     },
     {

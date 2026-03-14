@@ -37,6 +37,7 @@ entity salesDistItem : cuid {
     key ID              : UUID @(Core.Computed: true);
         ItemNumer       : String;
         Material        : String;
+        IsConfigurable  : Boolean default false;
         Description     : String;
         Plant           : String;
         Quantity        : Integer;
@@ -44,7 +45,21 @@ entity salesDistItem : cuid {
         UnitPrice       : Currency;
         TotalValueAmount : Decimal(15,2) @Measures.ISOCurrency: TotalValue_code;
         TotalValue      : Currency;
+        ConfigurationSurcharge : Decimal(15,2) default 0;
+        IsConfigured    : Boolean default false;
+        Configurations  : Composition of many salesDistItemConfiguration
+                            on Configurations.item = $self;
         parent : Association to salesDistHeader;
+}
+
+entity salesDistItemConfiguration : cuid {
+    key ID                 : UUID @(Core.Computed: true);
+        CharID             : String(40);
+        CharacteristicName : String(255);
+        ValueID            : String(40);
+        ValueName          : String(255);
+        Surcharge          : Decimal(15,2);
+        item               : Association to salesDistItem;
 }
 
 
@@ -62,8 +77,19 @@ entity catalog : cuid, managed {
         PriceBaseUoM       : String(10);
         MinimumQuantity    : Decimal(13,3);
         MinimumQuantityUoM : String(10);
+        IsConfigurable     : Boolean default false;
         QuoteFlag          : Boolean;
         DocOverrideFlag    : Boolean;
+}
+
+entity variantOption : cuid, managed {
+    key ID                 : UUID @(Core.Computed: true);
+        ProductID          : String(40);
+        CharID             : String(40);
+        CharacteristicName : String(255);
+        ValueID            : String(40);
+        ValueName          : String(255);
+        Surcharge          : Decimal(15,2);
 }
 
 entity Customer : cuid, managed {
