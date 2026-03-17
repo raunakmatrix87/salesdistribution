@@ -1,14 +1,19 @@
 sap.ui.define([
     "sap/m/MessageToast",
     "sap/m/MessageBox",
+    "sap/m/Dialog",
+    "sap/m/Button",
+    "sap/m/Image",
     "sap/ui/core/Fragment",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator"
-], function (MessageToast, MessageBox, Fragment, Filter, FilterOperator) {
+], function (MessageToast, MessageBox, Dialog, Button, Image, Fragment, Filter, FilterOperator) {
     "use strict";
 
     var sFragmentId = "catalogPicker";
     var oCatalogDialog;
+    var oImagePreviewDialog;
+    var oImagePreviewControl;
     var oPendingHeaderContext;
     var oLastActionController;
 
@@ -52,6 +57,50 @@ sap.ui.define([
         if (oBinding) {
             oBinding.filter([]);
         }
+    }
+
+    function ensureImagePreviewDialog() {
+        if (oImagePreviewDialog) {
+            return oImagePreviewDialog;
+        }
+
+        oImagePreviewControl = new Image({
+            width: "100%",
+            densityAware: false,
+            decorative: false
+        });
+
+        oImagePreviewDialog = new Dialog({
+            title: "Product Image",
+            contentWidth: "40rem",
+            contentHeight: "40rem",
+            draggable: true,
+            resizable: true,
+            content: [oImagePreviewControl],
+            endButton: new Button({
+                text: "Close",
+                press: function () {
+                    oImagePreviewDialog.close();
+                }
+            })
+        });
+
+        if (oLastActionController && oLastActionController.getView) {
+            oLastActionController.getView().addDependent(oImagePreviewDialog);
+        }
+
+        return oImagePreviewDialog;
+    }
+
+    function openImagePreview(sImageUrl) {
+        if (!sImageUrl) {
+            MessageBox.information("No product image is available for this material.");
+            return;
+        }
+
+        ensureImagePreviewDialog();
+        oImagePreviewControl.setSrc(sImageUrl);
+        oImagePreviewDialog.open();
     }
 
     function nextItemNumber(oHeaderContext) {
@@ -175,6 +224,10 @@ sap.ui.define([
                 },
                 onCatalogAddConfirm: function () {
                     applyCatalogSelection();
+                },
+                onCatalogImagePress: function (oEvent) {
+                    var oSource = oEvent.getSource();
+                    openImagePreview(oSource.getSrc());
                 },
                 onCatalogCancel: function () {
                     oPendingHeaderContext = null;

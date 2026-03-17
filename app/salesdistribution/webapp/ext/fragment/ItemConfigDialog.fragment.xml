@@ -12,14 +12,15 @@
             <VBox class="sapUiSmallMargin">
                 <Title text="{itemConfig>/title}" level="H4" />
                 <Text text="{itemConfig>/subtitle}" class="sapUiTinyMarginBottom" />
+                <ObjectStatus
+                    text="{itemConfig>/progressText}"
+                    state="Information"
+                    class="sapUiTinyMarginBottom" />
                 <Table
                     id="itemConfigTable"
                     inset="false"
                     items="{itemConfig>/rows}">
                     <columns>
-                        <Column width="12rem">
-                            <header><Label text="Characteristic ID" /></header>
-                        </Column>
                         <Column width="16rem">
                             <header><Label text="Characteristic Name" /></header>
                         </Column>
@@ -33,7 +34,6 @@
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{itemConfig>charId}" />
                                 <Text text="{itemConfig>characteristicName}" />
                                 <ComboBox
                                     width="100%"
@@ -58,11 +58,16 @@
                 </HBox>
             </VBox>
         </content>
-        <beginButton>
-            <Button text="Apply" type="Emphasized" press="onConfigApply" />
-        </beginButton>
-        <endButton>
+        <buttons>
+            <Button
+                text="Previous"
+                enabled="{itemConfig>/canGoPrevious}"
+                press="onConfigPrevious" />
+            <Button
+                text="{itemConfig>/nextButtonText}"
+                type="Emphasized"
+                press="onConfigNext" />
             <Button text="Cancel" press="onConfigCancel" />
-        </endButton>
+        </buttons>
     </Dialog>
 </core:FragmentDefinition>

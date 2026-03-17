@@ -67,6 +67,7 @@ entity catalog : cuid, managed {
     key ID                 : UUID @(Core.Computed: true);
         ProductID          : String(40);
         ShortDescription   : String(255);
+        ImageUrl           : String(255);
         LongDescription    : String(2000);
         Category           : String(100);
         Supplier           : String(100);

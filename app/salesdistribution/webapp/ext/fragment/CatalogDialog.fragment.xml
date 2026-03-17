@@ -22,6 +22,7 @@
                 sticky="ColumnHeaders"
                 items="{path: '/catalog'}">
                 <columns>
+                    <Column width="7rem"><header><Label text="Image" /></header></Column>
                     <Column><header><Label text="Product" /></header></Column>
                     <Column><header><Label text="Description" /></header></Column>
                     <Column><header><Label text="Category" /></header></Column>
@@ -31,6 +32,13 @@
                 <items>
                     <ColumnListItem>
                         <cells>
+                            <Image
+                                src="{ImageUrl}"
+                                width="4rem"
+                                height="4rem"
+                                densityAware="false"
+                                decorative="false"
+                                press="onCatalogImagePress" />
                             <Text text="{ProductID}" />
                             <Text text="{ShortDescription}" />
                             <Text text="{Category}" />
