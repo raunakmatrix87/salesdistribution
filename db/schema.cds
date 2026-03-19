@@ -45,7 +45,6 @@ entity salesDistItem : cuid {
         UnitPrice       : Currency;
         TotalValueAmount : Decimal(15,2) @Measures.ISOCurrency: TotalValue_code;
         TotalValue      : Currency;
-        ConfigurationSurcharge : Decimal(15,2) default 0;
         IsConfigured    : Boolean default false;
         Configurations  : Composition of many salesDistItemConfiguration
                             on Configurations.item = $self;
@@ -58,7 +57,6 @@ entity salesDistItemConfiguration : cuid {
         CharacteristicName : String(255);
         ValueID            : String(40);
         ValueName          : String(255);
-        Surcharge          : Decimal(15,2);
         item               : Association to salesDistItem;
 }
 
@@ -90,7 +88,6 @@ entity variantOption : cuid, managed {
         CharacteristicName : String(255);
         ValueID            : String(40);
         ValueName          : String(255);
-        Surcharge          : Decimal(15,2);
 }
 
 entity Customer : cuid, managed {

@@ -14,7 +14,6 @@ sap.ui.define([
         title: "",
         subtitle: "",
         progressText: "",
-        totalSurcharge: "0.00",
         canGoPrevious: false,
         nextButtonText: "Apply",
         rows: []
@@ -44,12 +43,6 @@ sap.ui.define([
         return Fragment.byId(sFragmentId, "itemConfigTable");
     }
 
-    function calculateTotalSurcharge(aRows) {
-        return aRows.reduce(function (fTotal, oRow) {
-            return fTotal + Number(oRow.surcharge || 0);
-        }, 0).toFixed(2);
-    }
-
     function getCurrentItemContext() {
         return aSelectedItemContexts[iCurrentItemIndex];
     }
@@ -69,28 +62,17 @@ sap.ui.define([
                     charId: oOption.CharID,
                     characteristicName: oOption.CharacteristicName,
                     selectedValueId: oExisting ? oExisting.ValueID : "",
-                    surcharge: oExisting ? Number(oExisting.Surcharge || 0).toFixed(2) : "0.00",
                     options: []
                 });
             }
 
             mByCharacteristic.get(sKey).options.push({
                 valueId: oOption.ValueID,
-                valueName: oOption.ValueName,
-                surcharge: Number(oOption.Surcharge || 0).toFixed(2)
+                valueName: oOption.ValueName
             });
         });
 
         return Array.from(mByCharacteristic.values());
-    }
-
-    function syncRowSurcharge(oRowContext, sSelectedKey) {
-        var aOptions = oRowContext.getProperty("options") || [];
-        var oSelectedOption = aOptions.find(function (oOption) {
-            return oOption.valueId === sSelectedKey;
-        });
-        oRowContext.getModel().setProperty(oRowContext.getPath() + "/surcharge", oSelectedOption ? oSelectedOption.surcharge : "0.00");
-        oConfigModel.setProperty("/totalSurcharge", calculateTotalSurcharge(oConfigModel.getProperty("/rows") || []));
     }
 
     function ensureDialog(oController) {
@@ -103,10 +85,7 @@ sap.ui.define([
             id: sFragmentId,
             name: "salesdistribution.ext.fragment.ItemConfigDialog",
             controller: {
-                onConfigSelectionChange: function (oEvent) {
-                    var oRowContext = oEvent.getSource().getBindingContext("itemConfig");
-                    syncRowSurcharge(oRowContext, oEvent.getSource().getSelectedKey());
-                },
+                onConfigSelectionChange: function () {},
                 onConfigPrevious: function () {
                     navigateToItem(-1);
                 },
@@ -154,7 +133,6 @@ sap.ui.define([
             });
             await Promise.all(aDeletePromises);
 
-            var fSurchargeTotal = 0;
             aChosenRows.forEach(function (oRow) {
                 var oSelectedOption = (oRow.options || []).find(function (oOption) {
                     return oOption.valueId === oRow.selectedValueId;
@@ -163,32 +141,18 @@ sap.ui.define([
                     return;
                 }
 
-                var fSurcharge = Number(oSelectedOption.surcharge || 0);
-                fSurchargeTotal += fSurcharge;
                 oConfigBinding.create({
                     CharID: oRow.charId,
                     CharacteristicName: oRow.characteristicName,
                     ValueID: oSelectedOption.valueId,
-                    ValueName: oSelectedOption.valueName,
-                    Surcharge: fSurcharge
+                    ValueName: oSelectedOption.valueName
                 });
             });
-
-            var fBaseUnitPrice = Number(oItemContext.getProperty("UnitPriceAmount") || 0) - Number(oItemContext.getProperty("ConfigurationSurcharge") || 0);
-            var fFinalUnitPrice = Number((fBaseUnitPrice + fSurchargeTotal).toFixed(2));
-            var iQuantity = Number(oItemContext.getProperty("Quantity") || 0);
-
-            await oItemContext.setProperty("ConfigurationSurcharge", Number(fSurchargeTotal.toFixed(2)));
             await oItemContext.setProperty("IsConfigured", aChosenRows.length > 0);
-            await oItemContext.setProperty("UnitPriceAmount", fFinalUnitPrice);
-            await oItemContext.setProperty("TotalValueAmount", Number((iQuantity * fFinalUnitPrice).toFixed(2)));
             await oModel.submitBatch("$auto");
 
             await oItemContext.requestSideEffects([
-                "ConfigurationSurcharge",
-                "IsConfigured",
-                "UnitPriceAmount",
-                "TotalValueAmount"
+                "IsConfigured"
             ]);
         });
     }
@@ -243,7 +207,6 @@ sap.ui.define([
             title: "Variant Configuration",
             subtitle: "Item " + sItemNumber + " | Material " + sMaterial + " | " + oData.catalog.ShortDescription,
             progressText: "Material " + (iCurrentItemIndex + 1) + " of " + iTotal,
-            totalSurcharge: calculateTotalSurcharge(oData.rows),
             canGoPrevious: iCurrentItemIndex > 0,
             nextButtonText: bHasNext ? "Next" : "Apply",
             rows: oData.rows

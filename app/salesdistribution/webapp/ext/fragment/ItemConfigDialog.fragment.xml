@@ -27,9 +27,6 @@
                         <Column width="16rem">
                             <header><Label text="Selected Value" /></header>
                         </Column>
-                        <Column width="10rem" hAlign="End">
-                            <header><Label text="Surcharge" /></header>
-                        </Column>
                     </columns>
                     <items>
                         <ColumnListItem>
@@ -44,18 +41,10 @@
                                         key="{itemConfig>valueId}"
                                         text="{itemConfig>valueName}" />
                                 </ComboBox>
-                                <ObjectNumber
-                                    number="{itemConfig>surcharge}"
-                                    unit="USD" />
                             </cells>
                         </ColumnListItem>
                     </items>
                 </Table>
-                <HBox justifyContent="End" class="sapUiSmallMarginTop">
-                    <ObjectStatus
-                        text="{= 'Total Surcharge: ' + ${itemConfig>/totalSurcharge} + ' USD' }"
-                        state="Information" />
-                </HBox>
             </VBox>
         </content>
         <buttons>
