@@ -14,4 +14,5 @@ service SalesDist {
     action SalesOrderSimulation();
     action RefreshScreen();
     action CreateSalesOrder();
+    action CreateSalesOrderItem();
 }
