@@ -13,4 +13,5 @@ service SalesDist {
     entity variantOption as projection on db.variantOption;
     action SalesOrderSimulation();
     action RefreshScreen();
+    action CreateSalesOrder();
 }
